@@ -17,7 +17,7 @@ EMAIL_HOST = 'smtp.your-email-provider.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'the.hidden.spectra@gmail.com'
-EMAIL_HOST_PASSWORD = 'yangiparol'
+EMAIL_HOST_PASSWORD = 'ppnz ojis vvwz caqq'
 
 ALLOWED_HOSTS = ["*"]
 

@@ -124,15 +124,15 @@ class QuizViewSet(ViewSet):
         if len(results) == 10:
             total_correct = sum(result['is_correct'] for result in results)
 
+            del request.session['quiz_start_time']
+            del request.session['quiz_results']
+
             subject = 'Quiz Results'
             message = f'You answered {total_correct} out of 10 questions correctly.'
             from_email = settings.EMAIL_HOST_USER
             recipient_list = [user.email]
 
             send_mail(subject, message, from_email, recipient_list)
-
-            del request.session['quiz_start_time']
-            del request.session['quiz_results']
 
             return Response({"message": "Quiz completed. Results have been sent to your email."},
                             status=status.HTTP_200_OK)
