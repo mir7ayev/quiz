@@ -76,12 +76,10 @@ class QuizViewSet(ViewSet):
     @action(methods=['post'], detail=False)
     def answers(self, request):
         user = request.user
-        results = []  # 1 element
 
         start_time = request.session.get('quiz_start_time')
         if start_time is None:
             return Response("No start time provided", status=status.HTTP_404_NOT_FOUND)
-
         start_time = timezone.datetime.fromisoformat(start_time)
 
         question_id = request.data.get('question_id')
@@ -97,6 +95,9 @@ class QuizViewSet(ViewSet):
             return Response("No question found", status=status.HTTP_400_BAD_REQUEST)
 
         answer = Answer.objects.filter(id=answer_id, question_id=question_id).first()
+        if answer is None:
+            return Response("No answer found", status=status.HTTP_400_BAD_REQUEST)
+
         is_correct = answer.is_correct
 
         if (timezone.now() - start_time).total_seconds() > 180:
@@ -110,21 +111,28 @@ class QuizViewSet(ViewSet):
         )
         quiz_result.save()
 
+        results = request.session.get('quiz_results', [])
+
         results.append({
             'question': question.text,
             'selected_answer': answer.text,
             'is_correct': is_correct
         })
 
-        if len(results) <= 10:  # TODO THIS SHIT
-            total_correct = QuizResult.objects.filter(user=user, is_correct=True).count()
+        request.session['quiz_results'] = results
+
+        if len(results) == 10:
+            total_correct = sum(result['is_correct'] for result in results)
 
             subject = 'Quiz Results'
             message = f'You answered {total_correct} out of 10 questions correctly.'
             from_email = settings.EMAIL_HOST_USER
-            recipient_list = ['mir7ayev@gmail.com']
+            recipient_list = [user.email]
 
             send_mail(subject, message, from_email, recipient_list)
+
+            del request.session['quiz_start_time']
+            del request.session['quiz_results']
 
             return Response({"message": "Quiz completed. Results have been sent to your email."},
                             status=status.HTTP_200_OK)
