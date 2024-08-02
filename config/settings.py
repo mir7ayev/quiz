@@ -13,7 +13,7 @@ SECRET_KEY = 'django-insecure-5zds4jw)2+s4d7ajr*5((@yqq5iu*1@b2mn#2ih*b97c1oqe-+
 DEBUG = True
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.your-email-provider.com'
+EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'the.hidden.spectra@gmail.com'
