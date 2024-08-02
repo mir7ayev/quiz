@@ -120,12 +120,14 @@ class QuizViewSet(ViewSet):
         })
 
         request.session['quiz_results'] = results
+        request.session.save()
 
-        if len(results) >= 10:
+        if len(results) == 10:
             total_correct = sum(result['is_correct'] for result in results)
 
             del request.session['quiz_start_time']
             del request.session['quiz_results']
+            request.session.save()
 
             subject = 'Quiz Results'
             message = f'You answered {total_correct} out of 10 questions correctly.'
